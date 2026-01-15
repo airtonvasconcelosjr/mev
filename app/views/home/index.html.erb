@@ -1,0 +1,77 @@
+<div class="container full-width">
+  <div class="dashboard-header">
+    <h1>Resumo Mensal - <%= Date.today.strftime("%B %Y") %></h1>
+    <p>Período: <%= Date.parse(@start_date).strftime("%d/%m/%Y") %> - <%= Date.parse(@end_date).strftime("%d/%m/%Y") %></p>
+  </div>
+
+  <div class="summary-cards">
+    <div class="summary-card">
+      <span class="label">Saldo Inicial (01/<%= Date.today.strftime("%m") %>)</span>
+      <span class="value"><%= number_to_currency(@initial_balance, unit: "R$ ", separator: ",", delimiter: ".") %></span>
+    </div>
+    
+    <div class="summary-card highlight-positive">
+      <span class="label">Total Entradas</span>
+      <span class="value">+ <%= number_to_currency(@total_inflow, unit: "R$ ", separator: ",", delimiter: ".") %></span>
+    </div>
+
+    <div class="summary-card highlight-negative">
+      <span class="label">Total Saídas</span>
+      <span class="value">- <%= number_to_currency(@total_outflow, unit: "R$ ", separator: ",", delimiter: ".") %></span>
+    </div>
+
+    <div class="summary-card">
+      <span class="label">Dívidas Manuais (Mês)</span>
+      <span class="value">- <%= number_to_currency(@total_debts, unit: "R$ ", separator: ",", delimiter: ".") %></span>
+    </div>
+
+    <div class="summary-card primary">
+      <span class="label">Saldo Final (Hoje)</span>
+      <span class="value"><%= number_to_currency(@current_balance, unit: "R$ ", separator: ",", delimiter: ".") %></span>
+    </div>
+  </div>
+
+  <div class="home-grid">
+    <div class="half-column">
+      <h2>Ultimas Transações</h2>
+      <% if @statement_data && @statement_data['transacoes'].present? %>
+        <ul class="transaction-list">
+          <% @statement_data['transacoes'].first(5).each do |tx| %>
+            <li class="transaction-item compact">
+              <span class="date"><%= Date.parse(tx['dataEntrada']).strftime("%d/%m") rescue tx['dataEntrada'] %></span>
+              <span class="desc"><%= tx['titulo'] || tx['descricao'] %></span>
+              <span class="amount <%= tx['tipoOperacao'] == 'C' ? 'positive' : 'negative' %>">
+                <%= tx['tipoOperacao'] == 'C' ? '+' : '-' %> <%= number_to_currency(tx['valor'], unit: "R$ ", separator: ",", delimiter: ".") %>
+              </span>
+            </li>
+          <% end %>
+        </ul>
+        <div class="view-more">
+          <%= link_to "Ver Extrato Completo", statements_path, class: "link-action" %>
+        </div>
+      <% else %>
+        <p class="empty-state">Sem transações no período.</p>
+      <% end %>
+    </div>
+
+    <div class="half-column">
+      <h2>Dívidas Próximas</h2>
+      <% if @debts.any? %>
+        <ul class="debt-list">
+          <% @debts.first(5).each do |debt| %>
+            <li class="transaction-item compact">
+              <span class="date"><%= debt.date&.strftime("%d/%m") || "--/--" %></span>
+              <span class="desc"><%= debt.name %></span>
+              <span class="amount neg"><%= number_to_currency(debt.value, unit: "R$ ", separator: ",", delimiter: ".") %></span>
+            </li>
+          <% end %>
+        </ul>
+        <div class="view-more">
+          <%= link_to "Gerenciar Dívidas", debts_path, class: "link-action" %>
+        </div>
+      <% else %>
+        <p class="empty-state">Nenhuma dívida pendente.</p>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,65 @@
+<div class="container">
+  <h1>Consulta de Saldo - Banco Inter (Sandbox)</h1>
+
+  <div class="search-box">
+    <%= form_with url: root_path, method: :get, local: true do |form| %>
+      <div class="form-row">
+        <div class="form-group">
+          <%= form.label :date, "Data do Saldo (Opcional):" %>
+          <%= form.date_field :date, value: @date, class: 'input-field' %>
+        </div>
+        <div class="form-group">
+          <%= form.submit "Consultar", class: 'btn-primary' %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @error %>
+    <div class="alert error">
+      <strong>Erro:</strong> <%= @error %>
+    </div>
+  <% end %>
+
+  <% if @balance_data %>
+    <div class="result-card">
+      <% if @balance_data['error'] || @balance_data['title'] # Inter sometimes returns title for errors %>
+        <div class="alert warning">
+          <p>Não foi possível obter o saldo.</p>
+          <pre><%= JSON.pretty_generate(@balance_data) %></pre>
+        </div>
+      <% else %>
+        <div class="balance-grid">
+          <div class="balance-item available">
+            <span class="label">Disponível</span>
+            <span class="value"><%= number_to_currency(@balance_data['disponivel'], unit: "R$ ", separator: ",", delimiter: ".") %></span>
+          </div>
+          
+          <div class="balance-item">
+            <span class="label">Bloqueado (Cheque)</span>
+            <span class="value"><%= number_to_currency(@balance_data['bloqueadoCheque'], unit: "R$ ", separator: ",", delimiter: ".") %></span>
+          </div>
+
+          <div class="balance-item">
+            <span class="label">Bloqueado (Judicial)</span>
+            <span class="value"><%= number_to_currency(@balance_data['bloqueadoJudicialmente'], unit: "R$ ", separator: ",", delimiter: ".") %></span>
+          </div>
+
+          <div class="balance-item">
+            <span class="label">Bloqueado (Adm)</span>
+            <span class="value"><%= number_to_currency(@balance_data['bloqueadoAdministrativo'], unit: "R$ ", separator: ",", delimiter: ".") %></span>
+          </div>
+
+          <div class="balance-item">
+            <span class="label">Limite</span>
+            <span class="value"><%= number_to_currency(@balance_data['limite'], unit: "R$ ", separator: ",", delimiter: ".") %></span>
+          </div>
+        </div>
+        
+        <div class="meta-info">
+          <small>Data de Referência: <%= @balance_data['dataReferencia'] %></small>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

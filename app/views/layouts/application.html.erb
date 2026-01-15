@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Banco MEV - Dashboard</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <%# Use the same application.css we updated %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  </head>
+
+  <body>
+    <% if logged_in? %>
+      <nav class="main-nav">
+        <div class="nav-container">
+          <div class="nav-brand"><%= link_to "Banco MEV", root_path %></div>
+          <ul class="nav-links">
+            <li><%= link_to "Home", root_path, class: (controller_name == 'home' ? 'active' : '') %></li>
+            <li><%= link_to "Saldo", balances_path, class: (controller_name == 'balances' ? 'active' : '') %></li>
+            <li><%= link_to "Extrato", statements_path, class: (controller_name == 'statements' ? 'active' : '') %></li>
+            <li><%= link_to "Dívidas (Debts)", debts_path, class: (controller_name == 'debts' ? 'active' : '') %></li>
+          </ul>
+          <div class="nav-user">
+            <span><%= current_user %></span>
+            <%= button_to "Sair", logout_path, method: :delete, class: "btn-logout" %>
+          </div>
+        </div>
+      </nav>
+    <% end %>
+
+    <main class="content-wrapper">
+      <% if flash[:notice] %>
+        <div class="alert success"><%= flash[:notice] %></div>
+      <% end %>
+      <% if flash[:alert] %>
+        <div class="alert error"><%= flash[:alert] %></div>
+      <% end %>
+
+      <%= yield %>
+    </main>
+  </body>
+</html>

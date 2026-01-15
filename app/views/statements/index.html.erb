@@ -1,0 +1,118 @@
+<div class="container">
+  <h1>Extrato Bancário</h1>
+  
+  <div class="search-box">
+    <%= form_with url: statements_path, method: :get, local: true do |form| %>
+      <div class="filters-row">
+        <div class="form-group">
+          <div>
+            <%= form.label :start_date, "Data Início:" %>
+            <%= form.date_field :start_date, value: @start_date, class: 'input-field' %>
+          </div>
+          <div>
+            <%= form.label :end_date, "Data Fim:" %>
+            <%= form.date_field :end_date, value: @end_date, class: 'input-field' %>
+          </div>
+        </div>
+
+        <div class="form-group">
+           <div>
+            <%= form.label :search, "Filtrar por Nome/Desc:" %>
+            <%= form.text_field :search, value: @search_text, class: 'input-field', placeholder: "Ex: Pix, Pagamento" %>
+          </div>
+          <div>
+            <%= form.label :category, "Categoria:" %>
+            <%= form.select :category, options_for_select([['Todas', '']] + @categories.map { |c| [c, c] }, @category_filter), {}, { class: 'input-field' } %>
+          </div>
+        </div>
+
+        <div class="form-group action-group">
+          <%= form.submit "Filtrar", class: 'btn-primary' %>
+          <%= link_to "Limpar", statements_path, class: 'btn-secondary' %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @error %>
+    <div class="alert error">
+      <strong>Erro:</strong> <%= @error %>
+    </div>
+  <% end %>
+
+  <% if @statement_data && @statement_data['transacoes'].present? && @statement_data['transacoes'].any? %>
+    <!-- Content exists but filters might hide it --> 
+  <% elsif @statement_data && @statement_data['transacoes'].empty? %>
+     <div class="alert warning">Nenhuma transação encontrada no período.</div>
+  <% end %>
+
+  <div class="statement-container">
+    <div class="column inflow">
+      <h2>Entradas (Crédito)</h2>
+      <% if @grouped_transactions[:inflow].empty? %>
+        <p class="empty-state">Nenhuma entrada encontrada.</p>
+      <% else %>
+        <% @grouped_transactions[:inflow].each do |category, data| %>
+          <div class="category-card">
+            <div class="category-header">
+              <span class="category-name"><%= category %></span>
+              <span class="category-total positive">+ <%= number_to_currency(data[:total], unit: "R$ ", separator: ",", delimiter: ".") %></span>
+            </div>
+            <ul class="transaction-list">
+              <% data[:transactions].each do |tx| %>
+                <li class="transaction-item">
+                  <span class="date"><%= Date.parse(tx['dataEntrada']).strftime("%d/%m") rescue tx['dataEntrada'] %></span>
+                  <div class="details">
+                     <span class="name"><%= tx['display_name'] %></span>
+                     <span class="desc"><%= tx['descricao'] %></span>
+                     <span class="category-tag"><%= tx['display_category'] %></span>
+                  </div>
+                  <div class="right-col" style="text-align: right;">
+                    <div class="amount positive"><%= number_to_currency(tx['valor'], unit: "R$ ", separator: ",", delimiter: ".") %></div>
+                    <% if tx['endToEndId'] || tx['idTransacao'] # Adjust field name if needed %> 
+                       <%= link_to "Comprovante", receipt_path(tx['endToEndId'] || tx['idTransacao']), class: "btn-xs" %>
+                    <% end %>
+                  </div>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+
+    <div class="column outflow">
+      <h2>Saídas (Débito)</h2>
+      <% if @grouped_transactions[:outflow].empty? %>
+        <p class="empty-state">Nenhuma saída encontrada.</p>
+      <% else %>
+        <% @grouped_transactions[:outflow].each do |category, data| %>
+          <div class="category-card">
+            <div class="category-header">
+              <span class="category-name"><%= category %></span>
+              <span class="category-total negative">- <%= number_to_currency(data[:total], unit: "R$ ", separator: ",", delimiter: ".") %></span>
+            </div>
+            <ul class="transaction-list">
+              <% data[:transactions].each do |tx| %>
+                <li class="transaction-item">
+                  <span class="date"><%= Date.parse(tx['dataEntrada']).strftime("%d/%m") rescue tx['dataEntrada'] %></span>
+                  <div class="details">
+                     <span class="name"><%= tx['display_name'] %></span>
+                     <span class="desc"><%= tx['descricao'] %></span>
+                     <span class="category-tag"><%= tx['display_category'] %></span>
+                  </div>
+                  <div class="right-col" style="text-align: right;">
+                    <div class="amount negative"><%= number_to_currency(tx['valor'], unit: "R$ ", separator: ",", delimiter: ".") %></div>
+                    <% if tx['endToEndId'] || tx['idTransacao'] %> 
+                       <%= link_to "Comprovante", receipt_path(tx['endToEndId'] || tx['idTransacao']), class: "btn-xs" %>
+                    <% end %>
+                  </div>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
