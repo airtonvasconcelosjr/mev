@@ -19,4 +19,3 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_13_202056) do
     t.decimal "value"
   end
 end
-psql 'postgresql://neondb_owner:npg_sWx2gw4bdXEy@ep-blue-darkness-ahsc2es8-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
