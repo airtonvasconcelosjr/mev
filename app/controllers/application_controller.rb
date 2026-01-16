@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  helper_method :current_user, :logged_in?
+  helper_method :current_user, :logged_in?, :user_name
   before_action :authenticate_user!
 
   private
@@ -22,5 +22,17 @@ class ApplicationController < ActionController::Base
       ENV['USER2_EMAIL'] => ENV['USER2_PASSWORD'],
       ENV['USER3_EMAIL'] => ENV['USER3_PASSWORD']
     }.compact
+  end
+
+  def user_name
+    if current_user == ENV['USER1_EMAIL']
+      "Airtão"
+    elsif current_user == ENV['USER2_EMAIL']
+      "Xuxa"
+    elsif current_user == ENV['USER3_EMAIL']
+      "Dedei"
+    else
+      "Usuário Desconhecido"
+    end
   end
 end

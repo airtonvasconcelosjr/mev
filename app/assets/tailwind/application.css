@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+/* Ensure Tailwind 4 spacing and common vars are available if not auto-injected */
+@theme {
+    --spacing: 0.25rem;
+}
+
+@import "../stylesheets/application.old.css";
+
+/* Fix for company logo centering if mx-auto/block is being stubborn */
+.company-logo.mx-auto {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: block !important;
+}

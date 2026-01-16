@@ -241,7 +241,7 @@ h2 {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    /* gap: 5px; */
 }
 
 .form-group>div {
@@ -384,6 +384,18 @@ h2 {
     color: var(--primary);
     text-decoration: none;
     font-weight: 600;
+}
+
+.company-logo {
+    max-width: 150px;
+    height: auto;
+}
+
+.action-group {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Print adjustments */

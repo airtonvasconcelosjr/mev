@@ -43,3 +43,6 @@ Thumbs.db
 .byebug_history
 .ruby-version
 .ruby-gemset
+
+/app/assets/builds/*
+!/app/assets/builds/.keep

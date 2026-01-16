@@ -1,23 +1,20 @@
 <div class="login-container">
   <div class="login-card">
-    <div class="login-header">
-      <h1>Banco MEV</h1>
-      <p>Acesse sua conta</p>
+    <div class="login-header text-center">
+      <%= image_tag "logo.png", alt: "Banco MEV Logo", class: "company-logo mx-auto block mb-2" %>
+      <p class="text-gray-600">Acesse sua conta</p>
     </div>
 
     <%= form_with url: login_path, method: :post, local: true do |f| %>
-      <% if flash[:alert] %>
-        <div class="alert error"><%= flash[:alert] %></div>
-      <% end %>
 
-      <div class="form-group">
-        <%= f.label :email, "E-mail" %>
-        <%= f.email_field :email, placeholder: "seu@email.com", required: true, class: "input-field" %>
+      <div class="form-group mb-4">
+        <%= f.label :email, "E-mail", class: "block mb-1 font-medium" %>
+        <%= f.email_field :email, placeholder: "seu@email.com", required: true, class: "input-field w-full" %>
       </div>
 
-      <div class="form-group">
-        <%= f.label :password, "Senha" %>
-        <%= f.password_field :password, placeholder: "••••••••", required: true, class: "input-field" %>
+      <div class="form-group mb-6">
+        <%= f.label :password, "Senha", class: "block mb-1 font-medium" %>
+        <%= f.password_field :password, placeholder: "••••••••", required: true, class: "input-field w-full" %>
       </div>
 
       <div class="action-group">

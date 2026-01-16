@@ -1,33 +1,33 @@
 <div class="container full-width">
   <div class="dashboard-header">
-    <h1>Resumo Mensal - <%= Date.today.strftime("%B %Y") %></h1>
-    <p>Período: <%= Date.parse(@start_date).strftime("%d/%m/%Y") %> - <%= Date.parse(@end_date).strftime("%d/%m/%Y") %></p>
+    <h1>Resumo Mensal - <%= l(Date.today, format: "%B %Y").capitalize %></h1>
+    <p class="text-gray-600 my-2">Período: <%= Date.parse(@start_date).strftime("%d/%m/%Y") %> - <%= Date.parse(@end_date).strftime("%d/%m/%Y") %></p>
   </div>
 
   <div class="summary-cards">
     <div class="summary-card">
-      <span class="label">Saldo Inicial (01/<%= Date.today.strftime("%m") %>)</span>
-      <span class="value"><%= number_to_currency(@initial_balance, unit: "R$ ", separator: ",", delimiter: ".") %></span>
+      <div class="label block mb-1">Saldo Inicial (01/<%= Date.today.strftime("%m") %>)</div>
+      <div class="value block whitespace-nowrap"><%= number_to_currency(@initial_balance, unit: "R$ ", separator: ",", delimiter: ".") %></div>
     </div>
     
     <div class="summary-card highlight-positive">
-      <span class="label">Total Entradas</span>
-      <span class="value">+ <%= number_to_currency(@total_inflow, unit: "R$ ", separator: ",", delimiter: ".") %></span>
+      <div class="label block mb-1">Total Entradas</div>
+      <div class="value block whitespace-nowrap">+ <%= number_to_currency(@total_inflow, unit: "R$ ", separator: ",", delimiter: ".") %></div>
     </div>
 
     <div class="summary-card highlight-negative">
-      <span class="label">Total Saídas</span>
-      <span class="value">- <%= number_to_currency(@total_outflow, unit: "R$ ", separator: ",", delimiter: ".") %></span>
+      <div class="label block mb-1">Total Saídas</div>
+      <div class="value block whitespace-nowrap">- <%= number_to_currency(@total_outflow, unit: "R$ ", separator: ",", delimiter: ".") %></div>
     </div>
 
     <div class="summary-card">
-      <span class="label">Dívidas Manuais (Mês)</span>
-      <span class="value">- <%= number_to_currency(@total_debts, unit: "R$ ", separator: ",", delimiter: ".") %></span>
+      <div class="label block mb-1">Dívidas Manuais (Mês)</div>
+      <div class="value block whitespace-nowrap">- <%= number_to_currency(@total_debts, unit: "R$ ", separator: ",", delimiter: ".") %></div>
     </div>
 
     <div class="summary-card primary">
-      <span class="label">Saldo Final (Hoje)</span>
-      <span class="value"><%= number_to_currency(@current_balance, unit: "R$ ", separator: ",", delimiter: ".") %></span>
+      <div class="label block mb-1">Saldo Final (Hoje)</div>
+      <div class="value block whitespace-nowrap"><%= number_to_currency(@current_balance, unit: "R$ ", separator: ",", delimiter: ".") %></div>
     </div>
   </div>
 

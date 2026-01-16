@@ -10,23 +10,49 @@
 
     <%= yield :head %>
 
-    <%# Use the same application.css we updated %>
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
   </head>
 
   <body>
+    <div id="flash-messages" class="fixed top-4 right-4 z-[9999] flex flex-col gap-2">
+      <% flash.each do |type, message| %>
+        <div data-controller="toast"
+             class="transition-all duration-500 transform translate-x-full opacity-0 flex items-center p-4 text-white rounded-lg shadow-2xl min-w-[300px] <%= type == 'notice' ? 'bg-green-600' : 'bg-red-600' %>"
+             role="alert">
+          <div class="flex-shrink-0">
+            <% if type == 'notice' %>
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+            <% else %>
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+            <% end %>
+          </div>
+          <div class="ms-3 text-sm font-semibold">
+            <%= message %>
+          </div>
+          <button type="button" 
+                  data-action="click->toast#close"
+                  class="ms-auto -mx-1.5 -my-1.5 text-white/80 hover:text-white hover:bg-white/20 rounded-lg p-1.5 inline-flex items-center justify-center h-8 w-8 transition-colors" 
+                  aria-label="Remove">
+            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+            </svg>
+          </button>
+        </div>
+      <% end %>
+    </div>
     <% if logged_in? %>
       <nav class="main-nav">
         <div class="nav-container">
           <div class="nav-brand"><%= link_to "Banco MEV", root_path %></div>
-          <ul class="nav-links">
+          <ul class="nav-links  h-[30px]">
             <li><%= link_to "Home", root_path, class: (controller_name == 'home' ? 'active' : '') %></li>
             <li><%= link_to "Saldo", balances_path, class: (controller_name == 'balances' ? 'active' : '') %></li>
             <li><%= link_to "Extrato", statements_path, class: (controller_name == 'statements' ? 'active' : '') %></li>
             <li><%= link_to "Dívidas (Debts)", debts_path, class: (controller_name == 'debts' ? 'active' : '') %></li>
           </ul>
           <div class="nav-user">
-            <span><%= current_user %></span>
+            <span><%= user_name %></span>
             <%= button_to "Sair", logout_path, method: :delete, class: "btn-logout" %>
           </div>
         </div>
@@ -34,12 +60,6 @@
     <% end %>
 
     <main class="content-wrapper">
-      <% if flash[:notice] %>
-        <div class="alert success"><%= flash[:notice] %></div>
-      <% end %>
-      <% if flash[:alert] %>
-        <div class="alert error"><%= flash[:alert] %></div>
-      <% end %>
 
       <%= yield %>
     </main>
