@@ -18,18 +18,18 @@ class ApplicationController < ActionController::Base
 
   def allowed_users
     {
-      ENV['USER1_EMAIL'] => ENV['USER1_PASSWORD'],
-      ENV['USER2_EMAIL'] => ENV['USER2_PASSWORD'],
-      ENV['USER3_EMAIL'] => ENV['USER3_PASSWORD']
+      ENV["USER1_EMAIL"] => ENV["USER1_PASSWORD"],
+      ENV["USER2_EMAIL"] => ENV["USER2_PASSWORD"],
+      ENV["USER3_EMAIL"] => ENV["USER3_PASSWORD"]
     }.compact
   end
 
   def user_name
-    if current_user == ENV['USER1_EMAIL']
+    if current_user == ENV["USER1_EMAIL"]
       "Airtão"
-    elsif current_user == ENV['USER2_EMAIL']
+    elsif current_user == ENV["USER2_EMAIL"]
       "Xuxa"
-    elsif current_user == ENV['USER3_EMAIL']
+    elsif current_user == ENV["USER3_EMAIL"]
       "Dedei"
     else
       "Usuário Desconhecido"

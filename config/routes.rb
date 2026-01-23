@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   # Root is the summary/home page
   root "home#index"
-  
+
   # Sessions / Auth
   get "login", to: "sessions#new", as: :login
   post "login", to: "sessions#create"
@@ -13,7 +13,7 @@ Rails.application.routes.draw do
   get "receipts/:id", to: "receipts#show", as: :receipt
 
   # Manual Debts
-  resources :debts, only: [:index, :create, :destroy]
+  resources :debts, only: [ :index, :create, :destroy ]
 
   # Other default routes
   get "up" => "rails/health#show", as: :rails_health_check
