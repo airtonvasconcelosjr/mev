@@ -7,27 +7,27 @@
   <div class="summary-cards">
     <div class="summary-card">
       <div class="label block mb-1">Saldo Inicial (01/<%= Date.today.strftime("%m") %>)</div>
-      <div class="value block whitespace-nowrap"><%= number_to_currency(@initial_balance, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+      <div class="value block whitespace-nowrap md:whitespace-normal"><%= number_to_currency(@initial_balance, unit: "R$ ", separator: ",", delimiter: ".") %></div>
     </div>
     
     <div class="summary-card highlight-positive">
       <div class="label block mb-1">Total Entradas</div>
-      <div class="value block whitespace-nowrap">+ <%= number_to_currency(@total_inflow, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+      <div class="value block whitespace-nowrap md:whitespace-normal">+ <%= number_to_currency(@total_inflow, unit: "R$ ", separator: ",", delimiter: ".") %></div>
     </div>
 
     <div class="summary-card highlight-negative">
       <div class="label block mb-1">Total Saídas</div>
-      <div class="value block whitespace-nowrap">- <%= number_to_currency(@total_outflow, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+      <div class="value block whitespace-nowrap md:whitespace-normal">- <%= number_to_currency(@total_outflow, unit: "R$ ", separator: ",", delimiter: ".") %></div>
     </div>
 
     <div class="summary-card">
       <div class="label block mb-1">Dívidas Manuais (Mês)</div>
-      <div class="value block whitespace-nowrap">- <%= number_to_currency(@total_debts, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+      <div class="value block whitespace-nowrap md:whitespace-normal">- <%= number_to_currency(@total_debts, unit: "R$ ", separator: ",", delimiter: ".") %></div>
     </div>
 
     <div class="summary-card primary">
       <div class="label block mb-1">Saldo Final (Hoje)</div>
-      <div class="value block whitespace-nowrap"><%= number_to_currency(@current_balance, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+      <div class="value block whitespace-nowrap md:whitespace-normal"><%= number_to_currency(@current_balance, unit: "R$ ", separator: ",", delimiter: ".") %></div>
     </div>
   </div>
 
