@@ -172,9 +172,10 @@ h2 {
 }
 
 .summary-card .value {
-    font-size: 18px;
+    font-size: clamp(14px, 4vw, 18px);
     font-weight: 800;
     word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .highlight-positive .value {
@@ -236,6 +237,14 @@ h2 {
         align-items: flex-end;
     }
 }
+
+@media (max-width: 519px) {
+    .summary-card.primary {
+        grid-column: 1 / -1;
+        order: 99;
+    }
+}
+
 
 .form-group {
     flex: 1;
