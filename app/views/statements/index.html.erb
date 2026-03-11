@@ -1,56 +1,52 @@
-<div class="container">
-  <h1>Extrato Bancário</h1>
+<div class="space-y-6">
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <h1 class="text-3xl font-black text-white">Extrato <span class="text-indigo-400">Bancário</span></h1>
+  </div>
   
-  <div class="search-box">
+  <div class="container overflow-visible">
     <%= form_with url: statements_path, method: :get, local: true do |form| %>
-      <div class="filters-row">
-        <div class="form-group">
-          <div>
-            <%= form.label :start_date, "Data Início:" %>
-            <%= form.date_field :start_date, value: @start_date, class: 'input-field' %>
-          </div>
-          <div>
-            <%= form.label :end_date, "Data Fim:" %>
-            <%= form.date_field :end_date, value: @end_date, class: 'input-field' %>
-          </div>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        <div>
+          <%= form.label :start_date, "Início", class: "block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2" %>
+          <%= form.date_field :start_date, value: @start_date, class: 'input-field w-full' %>
         </div>
+        <div>
+          <%= form.label :end_date, "Fim", class: "block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2" %>
+          <%= form.date_field :end_date, value: @end_date, class: 'input-field w-full' %>
+        </div>
+        <div>
+          <%= form.label :search, "Pesquisa", class: "block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2" %>
+          <%= form.text_field :search, value: @search_text, class: 'input-field w-full', placeholder: "Pix, Nome..." %>
+        </div>
+        <div>
+          <%= form.label :category, "Categoria", class: "block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2" %>
+          <%= form.select :category, options_for_select([['Todas', '']] + @categories.map { |c| [c, c] }, @category_filter), {}, { class: 'input-field w-full' } %>
+        </div>
+      </div>
 
-        <div class="form-group">
-           <div>
-            <%= form.label :search, "Filtrar por Nome/Desc:" %>
-            <%= form.text_field :search, value: @search_text, class: 'input-field', placeholder: "Ex: Pix, Pagamento" %>
-          </div>
-          <div>
-            <%= form.label :category, "Categoria:" %>
-            <%= form.select :category, options_for_select([['Todas', '']] + @categories.map { |c| [c, c] }, @category_filter), {}, { class: 'input-field' } %>
-          </div>
-        </div>
-
-        <div class="form-group action-group">
-          <%= form.submit "Filtrar", class: 'btn-primary' %>
-          <%= link_to "Limpar", statements_path, class: 'btn-secondary' %>
-        </div>
+      <div class="flex gap-2 mt-6">
+        <%= form.submit "Filtrar Resultados", class: 'btn-primary flex-1 md:flex-none' %>
+        <%= link_to "Limpar", statements_path, class: 'btn-secondary flex-1 md:flex-none' %>
       </div>
     <% end %>
   </div>
 
   <% if @error %>
     <div class="alert error">
-      <strong>Erro:</strong> <%= @error %>
+      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+      <span><%= @error %></span>
     </div>
   <% end %>
 
-  <% if @statement_data && @statement_data['transacoes'].present? && @statement_data['transacoes'].any? %>
-    <!-- Content exists but filters might hide it --> 
-  <% elsif @statement_data && @statement_data['transacoes'].empty? %>
-     <div class="alert warning">Nenhuma transação encontrada no período.</div>
-  <% end %>
-
-  <div class="statement-container">
-    <div class="column inflow">
-      <h2>Entradas (Crédito)</h2>
+  <div class="statement-container flex flex-col lg:flex-row gap-8">
+    <div class="column lg:w-1/2">
+      <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+        <div class="w-2 h-6 bg-emerald-500 rounded-full"></div>
+        Entradas <span class="text-xs font-medium text-slate-500 ml-2">(Crédito)</span>
+      </h2>
+      
       <% if @grouped_transactions[:inflow].empty? %>
-        <p class="empty-state">Nenhuma entrada encontrada.</p>
+        <div class="container py-12 text-center italic text-slate-500">Nenhuma entrada encontrada.</div>
       <% else %>
         <% @grouped_transactions[:inflow].each do |category, data| %>
           <div class="category-card">
@@ -58,33 +54,41 @@
               <span class="category-name"><%= category %></span>
               <span class="category-total positive">+ <%= number_to_currency(data[:total], unit: "R$ ", separator: ",", delimiter: ".") %></span>
             </div>
-            <ul class="transaction-list">
+            <div class="divide-y divide-white/5">
               <% data[:transactions].each do |tx| %>
-                <li class="transaction-item">
-                  <span class="date"><%= Date.parse(tx['dataEntrada']).strftime("%d/%m") rescue tx['dataEntrada'] %></span>
-                  <div class="details">
-                     <span class="name"><%= tx['display_name'] %></span>
-                     <span class="desc"><%= tx['descricao'] %></span>
-                     <span class="category-tag"><%= tx['display_category'] %></span>
+                <div class="px-4 py-4 flex items-center justify-between group">
+                  <div class="flex items-center gap-4">
+                    <div class="text-[10px] font-bold text-slate-500 w-8 border-r border-white/10">
+                      <%= Date.parse(tx['dataEntrada']).strftime("%d/%m") rescue "??" %>
+                    </div>
+                    <div>
+                      <div class="font-bold text-slate-200 group-hover:text-white transition-colors"><%= tx['display_name'] %></div>
+                      <div class="text-[10px] text-slate-500 uppercase font-medium"><%= tx['descricao'] %></div>
+                      <span class="category-tag"><%= tx['display_category'] %></span>
+                    </div>
                   </div>
-                  <div class="right-col" style="text-align: right;">
-                    <div class="amount positive"><%= number_to_currency(tx['valor'], unit: "R$ ", separator: ",", delimiter: ".") %></div>
-                    <% if tx['endToEndId'] || tx['idTransacao'] # Adjust field name if needed %> 
-                       <%= link_to "Comprovante", receipt_path(tx['endToEndId'] || tx['idTransacao']), class: "btn-xs" %>
+                  <div class="text-right">
+                    <div class="font-bold text-emerald-400"><%= number_to_currency(tx['valor'], unit: "R$ ", separator: ",", delimiter: ".") %></div>
+                    <% if tx['endToEndId'] || tx['idTransacao'] %> 
+                       <%= link_to "COMPROVANTE", receipt_path(tx['endToEndId'] || tx['idTransacao']), class: "btn-xs" %>
                     <% end %>
                   </div>
-                </li>
+                </div>
               <% end %>
-            </ul>
+            </div>
           </div>
         <% end %>
       <% end %>
     </div>
 
-    <div class="column outflow">
-      <h2>Saídas (Débito)</h2>
+    <div class="column lg:w-1/2">
+      <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+        <div class="w-2 h-6 bg-rose-500 rounded-full"></div>
+        Saídas <span class="text-xs font-medium text-slate-500 ml-2">(Débito)</span>
+      </h2>
+      
       <% if @grouped_transactions[:outflow].empty? %>
-        <p class="empty-state">Nenhuma saída encontrada.</p>
+        <div class="container py-12 text-center italic text-slate-500">Nenhuma saída encontrada.</div>
       <% else %>
         <% @grouped_transactions[:outflow].each do |category, data| %>
           <div class="category-card">
@@ -92,27 +96,32 @@
               <span class="category-name"><%= category %></span>
               <span class="category-total negative">- <%= number_to_currency(data[:total], unit: "R$ ", separator: ",", delimiter: ".") %></span>
             </div>
-            <ul class="transaction-list">
+            <div class="divide-y divide-white/5">
               <% data[:transactions].each do |tx| %>
-                <li class="transaction-item">
-                  <span class="date"><%= Date.parse(tx['dataEntrada']).strftime("%d/%m") rescue tx['dataEntrada'] %></span>
-                  <div class="details">
-                     <span class="name"><%= tx['display_name'] %></span>
-                     <span class="desc"><%= tx['descricao'] %></span>
-                     <span class="category-tag"><%= tx['display_category'] %></span>
+                <div class="px-4 py-4 flex items-center justify-between group">
+                  <div class="flex items-center gap-4">
+                    <div class="text-[10px] font-bold text-slate-500 w-8 border-r border-white/10">
+                      <%= Date.parse(tx['dataEntrada']).strftime("%d/%m") rescue "??" %>
+                    </div>
+                    <div>
+                      <div class="font-bold text-slate-200 group-hover:text-white transition-colors"><%= tx['display_name'] %></div>
+                      <div class="text-[10px] text-slate-500 uppercase font-medium"><%= tx['descricao'] %></div>
+                      <span class="category-tag"><%= tx['display_category'] %></span>
+                    </div>
                   </div>
-                  <div class="right-col" style="text-align: right;">
-                    <div class="amount negative"><%= number_to_currency(tx['valor'], unit: "R$ ", separator: ",", delimiter: ".") %></div>
+                  <div class="text-right">
+                    <div class="font-bold text-rose-400">- <%= number_to_currency(tx['valor'].to_f.abs, unit: "R$ ", separator: ",", delimiter: ".") %></div>
                     <% if tx['endToEndId'] || tx['idTransacao'] %> 
-                       <%= link_to "Comprovante", receipt_path(tx['endToEndId'] || tx['idTransacao']), class: "btn-xs" %>
+                       <%= link_to "COMPROVANTE", receipt_path(tx['endToEndId'] || tx['idTransacao']), class: "btn-xs" %>
                     <% end %>
                   </div>
-                </li>
+                </div>
               <% end %>
-            </ul>
+            </div>
           </div>
         <% end %>
       <% end %>
     </div>
   </div>
 </div>
+

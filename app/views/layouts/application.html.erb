@@ -14,20 +14,20 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <div id="flash-messages" class="fixed top-4 right-4 z-[9999] flex flex-col gap-2">
+  <body class="bg-[#0b0f1a] text-[#f8fafc]">
+    <div id="flash-messages" class="fixed top-4 right-4 z-[9999] flex flex-col gap-3">
       <% flash.each do |type, message| %>
         <div data-controller="toast"
-             class="transition-all duration-500 transform translate-x-full opacity-0 flex items-center p-4 text-white rounded-lg shadow-2xl min-w-[300px] <%= type == 'notice' ? 'bg-green-600' : 'bg-red-600' %>"
+             class="transition-all duration-500 transform translate-y-[-20px] opacity-0 flex items-center p-4 text-white rounded-xl shadow-2xl min-w-[320px] backdrop-blur-xl border border-white/10 <%= type == 'notice' ? 'bg-emerald-600/90' : 'bg-rose-600/90' %>"
              role="alert">
-          <div class="flex-shrink-0">
+          <div class="flex-shrink-0 bg-white/20 p-2 rounded-lg">
             <% if type == 'notice' %>
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
             <% else %>
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
             <% end %>
           </div>
-          <div class="ms-3 text-sm font-semibold">
+          <div class="ms-3 text-sm font-bold">
             <%= message %>
           </div>
           <button type="button" 
@@ -41,25 +41,73 @@
         </div>
       <% end %>
     </div>
+    
     <% if logged_in? %>
       <nav class="main-nav">
         <div class="nav-container">
-          <div class="nav-brand"><%= link_to "Banco MEV", root_path %></div>
-          <ul class="nav-links  h-[30px]">
-            <li><%= link_to "Home", root_path, class: (controller_name == 'home' ? 'active' : '') %></li>
-            <li><%= link_to "Saldo", balances_path, class: (controller_name == 'balances' ? 'active' : '') %></li>
-            <li><%= link_to "Extrato", statements_path, class: (controller_name == 'statements' ? 'active' : '') %></li>
-            <li><%= link_to "Dívidas (Debts)", debts_path, class: (controller_name == 'debts' ? 'active' : '') %></li>
-          </ul>
+          <div class="nav-brand">
+            <%= link_to root_path, class: "flex items-center gap-2 group" do %>
+              <div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center shadow-lg group-hover:bg-indigo-400 transition-colors">
+                <span class="text-white font-black">M</span>
+              </div>
+              <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">Banco MEV</span>
+            <% end %>
+          </div>
+
+          <div class="hidden md:flex items-center gap-1">
+            <ul class="nav-links">
+              <li><%= link_to "Home", root_path, class: (controller_name == 'home' ? 'active' : '') %></li>
+              <li><%= link_to "Saldo", balances_path, class: (controller_name == 'balances' ? 'active' : '') %></li>
+              <li><%= link_to "Extrato", statements_path, class: (controller_name == 'statements' ? 'active' : '') %></li>
+              <li><%= link_to "Dívidas", debts_path, class: (controller_name == 'debts' ? 'active' : '') %></li>
+            </ul>
+          </div>
+
           <div class="nav-user">
-            <span><%= user_name %></span>
-            <%= button_to "Sair", logout_path, method: :delete, class: "btn-logout" %>
+            <div class="hidden sm:flex flex-col items-end">
+              <span class="text-xs text-slate-400">Olá,</span>
+              <span class="font-bold"><%= user_name %></span>
+            </div>
+            <%= button_to logout_path, method: :delete, class: "btn-logout flex items-center gap-2" do %>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+              <span class="hidden sm:inline">Sair</span>
+            <% end %>
           </div>
         </div>
       </nav>
+
+      <!-- Bottom Nav for Mobile -->
+      <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-[#0b0f1a]/80 backdrop-blur-xl border-t border-white/10 z-50 px-6 py-3">
+        <ul class="flex justify-between items-center">
+          <li>
+            <%= link_to root_path, class: "flex flex-col items-center gap-1 #{controller_name == 'home' ? 'text-indigo-400' : 'text-slate-500'}" do %>
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+              <span class="text-[10px] font-bold uppercase tracking-tighter">Início</span>
+            <% end %>
+          </li>
+          <li>
+            <%= link_to balances_path, class: "flex flex-col items-center gap-1 #{controller_name == 'balances' ? 'text-indigo-400' : 'text-slate-500'}" do %>
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span class="text-[10px] font-bold uppercase tracking-tighter">Saldo</span>
+            <% end %>
+          </li>
+          <li>
+            <%= link_to statements_path, class: "flex flex-col items-center gap-1 #{controller_name == 'statements' ? 'text-indigo-400' : 'text-slate-500'}" do %>
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01m-.01 4h.01"></path></svg>
+              <span class="text-[10px] font-bold uppercase tracking-tighter">Extrato</span>
+            <% end %>
+          </li>
+          <li>
+            <%= link_to debts_path, class: "flex flex-col items-center gap-1 #{controller_name == 'debts' ? 'text-indigo-400' : 'text-slate-500'}" do %>
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span class="text-[10px] font-bold uppercase tracking-tighter">Dívidas</span>
+            <% end %>
+          </li>
+        </ul>
+      </nav>
     <% end %>
 
-    <main class="content-wrapper">
+    <main class="content-wrapper pb-24 md:pb-8">
 
       <%= yield %>
     </main>

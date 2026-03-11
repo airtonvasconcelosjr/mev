@@ -1,77 +1,122 @@
-<div class="container full-width">
-  <div class="dashboard-header">
-    <h1>Resumo Mensal - <%= l(Date.today, format: "%B %Y").capitalize %></h1>
-    <p class="text-gray-600 my-2 text-center md:text-left"><%= Date.parse(@start_date).strftime("%d/%m") %> - <%= Date.parse(@end_date).strftime("%d/%m") %></p>
+<div class="space-y-8">
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-black tracking-tight text-white mb-1">
+        Resumo <span class="text-indigo-400">Mensal</span>
+      </h1>
+      <p class="text-slate-400 font-medium">
+        <%= l(Date.today, format: "%B %Y").capitalize %> • 
+        <span class="text-indigo-300/80"><%= Date.parse(@start_date).strftime("%d/%m") %> - <%= Date.parse(@end_date).strftime("%d/%m") %></span>
+      </p>
+    </div>
   </div>
 
   <div class="summary-cards">
     <div class="summary-card">
-      <div class="label block mb-1">Saldo Inicial (01/<%= Date.today.strftime("%m") %>)</div>
-      <div class="value block break-words text-sm md:text-lg"><%= number_to_currency(@initial_balance, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+      <div class="label">Saldo Inicial</div>
+      <div class="value"><%= number_to_currency(@initial_balance, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+      <div class="mt-2 text-[10px] text-slate-500 font-bold uppercase">01/<%= Date.today.strftime("%m/%y") %></div>
     </div>
     
     <div class="summary-card highlight-positive">
-      <div class="label block mb-1">Total Entradas</div>
-      <div class="value block break-words text-sm md:text-lg">+ <%= number_to_currency(@total_inflow, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+      <div class="label">Entradas</div>
+      <div class="value">+ <%= number_to_currency(@total_inflow, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+      <div class="mt-2 text-[10px] text-emerald-500/50 font-bold uppercase">Este mês</div>
     </div>
 
     <div class="summary-card highlight-negative">
-      <div class="label block mb-1">Total Saídas</div>
-      <div class="value block break-words text-sm md:text-lg">- <%= number_to_currency(@total_outflow, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+      <div class="label">Saídas</div>
+      <div class="value">- <%= number_to_currency(@total_outflow, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+      <div class="mt-2 text-[10px] text-rose-500/50 font-bold uppercase">Este mês</div>
     </div>
 
     <div class="summary-card">
-      <div class="label block mb-1">Dívidas Manuais (Mês)</div>
-      <div class="value block break-words text-sm md:text-lg">- <%= number_to_currency(@total_debts, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+      <div class="label">Dívidas Manuais</div>
+      <div class="value">- <%= number_to_currency(@total_debts, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+      <div class="mt-2 text-[10px] text-slate-500 font-bold uppercase">Projetado</div>
     </div>
 
     <div class="summary-card primary">
-      <div class="label block mb-1">Saldo Final (Hoje)</div>
-      <div class="value block break-words text-sm md:text-lg"><%= number_to_currency(@current_balance, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+      <div class="label">Saldo Final</div>
+      <div class="value"><%= number_to_currency(@current_balance, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+      <div class="mt-2 text-[10px] text-indigo-500/50 font-bold uppercase">Hoje</div>
     </div>
   </div>
 
   <div class="home-grid">
-    <div class="half-column">
-      <h2 class="text-center">Ultimas Transações</h2>
+    <div class="container">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold flex items-center gap-2">
+          <div class="w-2 h-6 bg-indigo-500 rounded-full"></div>
+          Últimas Transações
+        </h2>
+        <%= link_to "Ver tudo", statements_path, class: "text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors uppercase tracking-wider" %>
+      </div>
+
       <% if @statement_data && @statement_data['transacoes'].present? %>
-        <ul class="transaction-list">
+        <div class="divide-y divide-white/5">
           <% @statement_data['transacoes'].first(5).each do |tx| %>
-            <li class="transaction-item compact">
-              <span class="date"><%= Date.parse(tx['dataEntrada']).strftime("%d/%m") rescue tx['dataEntrada'] %></span>
-              <span class="desc"><%= tx['titulo'] || tx['descricao'] %></span>
-              <span class="amount <%= tx['tipoOperacao'] == 'C' ? 'positive' : 'negative' %>">
-                <%= tx['tipoOperacao'] == 'C' ? '+' : '-' %> <%= number_to_currency(tx['valor'], unit: "R$ ", separator: ",", delimiter: ".") %>
-              </span>
-            </li>
+            <div class="py-4 flex items-center justify-between group transition-all">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl <%= tx['tipoOperacao'] == 'C' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500' %> flex items-center justify-center font-bold text-xs">
+                  <%= Date.parse(tx['dataEntrada']).strftime("%d") rescue "??" %>
+                </div>
+                <div>
+                  <div class="font-bold text-slate-200 group-hover:text-white transition-colors"><%= tx['titulo'] || tx['descricao'] %></div>
+                  <div class="text-xs text-slate-500"><%= Date.parse(tx['dataEntrada']).strftime("%b %Y") rescue "" %></div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="font-black <%= tx['tipoOperacao'] == 'C' ? 'text-emerald-400' : 'text-rose-400' %>">
+                  <%= tx['tipoOperacao'] == 'C' ? '+' : '-' %> <%= number_to_currency(tx['valor'].to_f.abs, unit: "R$ ", separator: ",", delimiter: ".") %>
+                </div>
+              </div>
+            </div>
           <% end %>
-        </ul>
-        <div class="view-more text-right mt-3 text-sm">
-          <%= link_to "Ver Extrato Completo", statements_path, class: "link-action" %>
         </div>
       <% else %>
-        <p class="empty-state">Sem transações no período.</p>
+        <div class="py-12 text-center">
+          <div class="text-slate-500 font-medium italic">Sem transações no período.</div>
+        </div>
       <% end %>
     </div>
 
-    <div class="half-column">
-      <h2 class="text-center">Dívidas Próximas</h2>
+    <div class="container">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold flex items-center gap-2">
+          <div class="w-2 h-6 bg-purple-500 rounded-full"></div>
+          Próximas Dívidas
+        </h2>
+        <%= link_to "Gerenciar", debts_path, class: "text-xs font-bold text-purple-400 hover:text-purple-300 transition-colors uppercase tracking-wider" %>
+      </div>
+
       <% if @debts.any? %>
-        <ul class="debt-list">
+        <div class="divide-y divide-white/5">
           <% @debts.first(5).each do |debt| %>
-            <li class="transaction-item compact">
-              <span class="date"><%= debt.date&.strftime("%d/%m") || "--/--" %></span>
-              <span class="desc"><%= debt.name %></span>
-              <span class="amount neg"><%= number_to_currency(debt.value, unit: "R$ ", separator: ",", delimiter: ".") %></span>
-            </li>
+            <div class="py-4 flex items-center justify-between group">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-500 flex items-center justify-center font-bold text-xs">
+                  <%= debt.date&.strftime("%d") || "??" %>
+                </div>
+                <div>
+                  <div class="font-bold text-slate-200 group-hover:text-white transition-colors"><%= debt.name %></div>
+                  <div class="text-xs text-slate-500"><%= debt.date&.strftime("%b %Y") || "Sem data" %></div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="font-black text-rose-400">
+                  - <%= number_to_currency(debt.value, unit: "R$ ", separator: ",", delimiter: ".") %>
+                </div>
+              </div>
+            </div>
           <% end %>
-        </ul>
-        <div class="view-more text-right mt-3 text-sm">
-          <%= link_to "Gerenciar Dívidas", debts_path, class: "link-action" %>
         </div>
       <% else %>
-        <p class="empty-state">Nenhuma dívida pendente.</p>
+        <div class="py-12 text-center">
+          <div class="text-slate-500 font-medium italic">Nenhuma dívida pendente.</div>
+        </div>
       <% end %>
     </div>
   </div>
 </div>
+
