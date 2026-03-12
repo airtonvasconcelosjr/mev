@@ -15,8 +15,7 @@ class StatementsController < ApplicationController
 
       # Enhance transactions with a normalized 'display_name' and 'display_category' for easier filtering
       all_transactions.each_with_index do |tx, index|
-        Rails.logger.info "TX_DEBUG: #{tx.inspect}" if index == 0
-        tx["display_name"] = extract_name(tx)
+        tx["display_name"] = extract_transaction_name(tx)
         tx["display_category"] = tx["tipoTransacao"] || "Outros"
       end
 
@@ -50,10 +49,6 @@ class StatementsController < ApplicationController
 
   private
 
-  def extract_name(tx)
-    # Attempt to find the best name field based on common Inter API responses
-    tx["nmAgente"] || tx["nomeFavorecido"] || tx["nomePagador"] || tx["titulo"] || "N/A"
-  end
 
   def group_transactions(transactions)
     grouped = { inflow: {}, outflow: {} }

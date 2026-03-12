@@ -8,8 +8,9 @@ Rails.application.routes.draw do
   delete "logout", to: "sessions#destroy", as: :logout
 
   # Banking features
-  get "balances/index", as: :balances
-  get "statements/index", as: :statements
+  get "balances", to: "balances#index", as: :balances
+  get "statements", to: "statements#index", as: :statements
+  get "extrato", to: "statements#index"
   get "receipts/:id", to: "receipts#show", as: :receipt
 
   # Manual Debts

@@ -35,4 +35,20 @@ class ApplicationController < ActionController::Base
       "Usuário Desconhecido"
     end
   end
+
+  # Name Cleaning Utilities
+  helper_method :extract_transaction_name
+
+  def extract_transaction_name(tx)
+    raw_name = tx["nmAgente"] || tx["nomeFavorecido"] || tx["nomePagador"] || tx["titulo"] || tx["descricao"] || "N/A"
+    clean_pix_name(raw_name).titleize
+  end
+
+  def clean_pix_name(name)
+    return name if name.blank?
+    # Remove technical prefixes like "PIX ENVIADO - Cp :90400888-" or "Cp :90400888-"
+    res = name.gsub(/(PIX\s+(ENVIADO|RECEBIDO|PAGAMENTO|TRANSFERIDO)\s*-\s*)?Cp\s*:\d+-/i, "")
+    res = res.gsub(/PIX\s+(ENVIADO|RECEBIDO|PAGAMENTO|TRANSFERIDO)\s*-?\s*/i, "")
+    res.strip
+  end
 end

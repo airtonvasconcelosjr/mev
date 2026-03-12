@@ -1,10 +1,9 @@
-<div class="container">
-  <div class="header-with-action">
-    <h1>Controle de Dívidas (Debts)</h1>
+<div class="container space-y-8">
+  <div class="header-with-action pb-2 border-b border-white/5">
+    <h1 class="text-3xl font-black text-white">Controle de <span class="text-purple-400">Dívidas</span></h1>
   </div>
 
   <div class="search-box">
-    <h3>Nova Dívida</h3>
     <%= form_with model: @new_debt, local: true do |f| %>
       <div class="form-row">
         <div class="form-group flex-2">
@@ -39,12 +38,18 @@
         </thead>
         <tbody>
           <% @debts.each do |debt| %>
-            <tr>
-              <td><%= debt.date&.strftime("%d/%m/%Y") || "-" %></td>
-              <td class="bold"><%= debt.name %></td>
-              <td class="amount neg"><%= number_to_currency(debt.value, unit: "R$ ", separator: ",", delimiter: ".") %></td>
-              <td>
-                <%= button_to "Remover", debt_path(debt), method: :delete, data: { confirm: "Tem certeza?" }, class: "btn-danger-sm" %>
+            <tr class="border-b border-white/5 last:border-0">
+              <td class="py-5"><%= debt.date&.strftime("%d/%m/%Y") || "-" %></td>
+              <td class="py-5 font-bold text-slate-200"><%= debt.name %></td>
+              <td class="py-5 amount neg font-black"><%= number_to_currency(debt.value, unit: "R$ ", separator: ",", delimiter: ".") %></td>
+              <td class="py-5">
+                <div class="flex justify-end">
+                  <%= button_to debt_path(debt), method: :delete, data: { confirm: "Tem certeza que deseja remover esta dívida?" }, 
+                      class: "btn-logout flex items-center gap-2 !py-1.5 !px-3" do %>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    <span class="text-xs font-bold uppercase tracking-wider">Remover</span>
+                  <% end %>
+                </div>
               </td>
             </tr>
           <% end %>
